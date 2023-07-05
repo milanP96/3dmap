@@ -139,7 +139,10 @@ map.on('click', function(e) {
       .setLngLat(coordinates)
       .addTo(map);
 
-    ui_markers[selected].remove()
+    if(selected in ui_markers && ui_markers[selected]) {
+        ui_markers[selected].remove()
+    }
+
     ui_markers[selected] = marker
 
 
