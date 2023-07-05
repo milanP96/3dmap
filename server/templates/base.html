@@ -1,0 +1,42 @@
+{% load static tailwind_tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>My amazing site</title>
+    {% tailwind_css %}
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css' rel='stylesheet' />
+</head>
+
+<body class="bg-cyan-500">
+<header class="bg-cyan-900">
+    {% if user.is_authenticated %}
+        <nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
+            <div class="flex lg:flex-1">
+              <a href="#" class="-m-1.5 p-1.5">
+                <span class="sr-only">Your Company</span>
+                <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500" alt="">
+              </a>
+            </div>
+            <p class="ml-4 text-sm font-semibold leading-6 text-white">Welcome {{ user.username }}</p>
+            <div class="flex flex-1 justify-end">
+              <a href="{% url 'logout' %}" class="text-sm font-semibold leading-6 text-white">Log out <span aria-hidden="true">&rarr;</span></a>
+            </div>
+            </nav>
+            <!-- Mobile menu, show/hide based on menu open state. -->
+            <div class="lg:hidden" role="dialog" aria-modal="true">
+            <!-- Background backdrop, show/hide based on slide-over state. -->
+
+            </div>
+    {% endif %}
+</header>
+
+    <div>
+        {% block content %}{% endblock %}
+    </div>
+
+    <div id="footer">
+    </div>
+</body>
+</html>
