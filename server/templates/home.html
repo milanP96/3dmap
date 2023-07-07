@@ -165,11 +165,26 @@ map.on('click', function(e) {
         .catch(err => {
             console.log(err)
         });
-
-
-
 });
 
+
+function generateRandomLong() {
+    var num = (Math.random()*180).toFixed(3);
+    var posorneg = Math.floor(Math.random());
+    if (posorneg == 0) {
+        num = num * -1;
+    }
+    return num;
+}
+// LATITUDE -90 to +90
+function generateRandomLat() {
+    var num = (Math.random()*90).toFixed(3);
+    var posorneg = Math.floor(Math.random());
+    if (posorneg == 0) {
+        num = num * -1;
+    }
+    return num;
+}
 
 
 function select_choice(value) {
@@ -178,6 +193,56 @@ function select_choice(value) {
         function(element, index, array) {
             if (element.id == value) {
                 element.classList.add("bg-cyan-500");
+
+
+                let markerCoordinates = null;
+
+                if (!(element.id in ui_markers) || !ui_markers[element.id]) {
+                    {#if there is no lat and lgt for selected acivity generate random and save to db#}
+
+                     let coordinates_new = {
+                         lat: generateRandomLat(),
+                         lng: generateRandomLong()
+                     }
+
+
+                     const data = new FormData();
+                     data.append('activity', selected);
+                     data.append('lng', coordinates_new.lng);
+                     data.append('lat', coordinates_new.lat);
+
+                    console.log(coordinates_new, "NEWWW")
+                     fetch('/change-location/', {
+                        method: 'post',
+                        headers: {
+                            "X-CSRFToken": getCookie("csrftoken"),
+                        },
+                        body: data
+                     })
+                        .then((res) => {return res.json()})
+                        .then(json => {
+                            console.log('asdasd')
+                        })
+                        .catch(err => {
+                            console.log(err)
+                        });
+
+                     let new_marker = new mapboxgl.Marker({color: marker_colors[selected]})
+                      .setLngLat(coordinates_new)
+                      .addTo(map);
+
+                     ui_markers[element.id] = new_marker
+                }
+
+                markerCoordinates = ui_markers[element.id].getLngLat()
+
+                map.flyTo({
+                  center: markerCoordinates,
+                  zoom: 15, // You can adjust the desired zoom level
+                  speed: 1.5, // You can adjust the animation speed
+                  curve: 1, // You can adjust the animation curve
+                  essential: true // If set to true, this animation will be considered essential and will not be affected by browser constraints
+                });
             } else {
                 element.classList.remove("bg-cyan-500");
             }
